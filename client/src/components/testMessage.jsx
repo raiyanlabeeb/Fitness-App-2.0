@@ -14,11 +14,12 @@ const TestMessage = () => {
     return <p>Loading...</p>;
   }
 
+  // need to commit
   return (
     <>
       {users.map((user) => (
         <p key={user.id}>
-          {"Name: " + user.name} {"Email: " + user.email}
+          {"Name: " + user.name} {"Email: " + user.email} 
         </p>
       ))}
     </>
