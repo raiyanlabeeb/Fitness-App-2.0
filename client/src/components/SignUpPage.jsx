@@ -6,17 +6,33 @@ function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault(); //Prevents the default browser form submission behavior which reloads the page.
 
-    if (!name || !email || !password) {
-      setMessage("Please fill out all fields.");
-      return;
+    try {
+      const response = await fetch("http://localhost:5000/auth/signup", {
+        // Sends a POST request to the server to create a new user
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+      
+      setError(""); // Resets any previous error message
+      setMessage(""); // Resets any previous success message
+      const data = await response.json(); // Waits for the response and converts it to JSON. Data now holds the response from the server.
+      if (response.ok) {
+        setMessage("✅");
+      } else {
+        setError(data.error || "An error occurred. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during signup:", error); // Logs any error that occurs during the fetch request
+      setError("An error occurred. Please try again later.");
     }
-
-    // TODO: Replace with real backend signup call
-    setMessage(`Account created for ${name} with email: ${email}`);
   };
 
   return (
@@ -25,7 +41,10 @@ function SignUpPage() {
         <h2 className="text-2xl font-semibold mb-6 text-center">Sign Up</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block mb-2 font-medium text-gray-700" htmlFor="name">
+            <label
+              className="block mb-2 font-medium text-gray-700"
+              htmlFor="name"
+            >
               Full Name
             </label>
             <input
@@ -39,7 +58,10 @@ function SignUpPage() {
           </div>
 
           <div>
-            <label className="block mb-2 font-medium text-gray-700" htmlFor="email">
+            <label
+              className="block mb-2 font-medium text-gray-700"
+              htmlFor="email"
+            >
               Email
             </label>
             <input
@@ -53,7 +75,10 @@ function SignUpPage() {
           </div>
 
           <div>
-            <label className="block mb-2 font-medium text-gray-700" htmlFor="password">
+            <label
+              className="block mb-2 font-medium text-gray-700"
+              htmlFor="password"
+            >
               Password
             </label>
             <input
@@ -74,10 +99,13 @@ function SignUpPage() {
           </button>
         </form>
 
-        {message && (
-          <p className="mt-4 text-center text-green-600 font-medium">{message}</p>
+        {error ? (
+          <p className="mt-4 text-center text-red-600 font-medium">{error}</p>
+        ) : (
+          <p className="mt-4 text-center text-green-600 font-medium">
+            {message}
+          </p>
         )}
-
         <p className="mt-6 text-center text-gray-600">
           Already have an account?{" "}
           <Link to="/login" className="text-blue-600 hover:underline">
