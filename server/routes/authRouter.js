@@ -2,10 +2,12 @@ import express from "express";
 import cors from "cors";
 import prisma from "../prisma/prisma.js";
 import bcrypt from "bcrypt"; // Importing bcrypt for password hashing
+import jwt from "jsonwebtoken"; // Importing jsonwebtoken for token generation
 
 const router = express.Router();
 router.use(express.json());
 router.use(cors());
+const JWT_SECRET = process.env.JWT_SECRET;
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body; // Extracts the email and password that the user provides
@@ -27,9 +29,13 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid password" }); // If password is incorrect, return an error (401 Unauthorized)
     }
 
+    const token = jwt.sign({ email: user.email }, JWT_SECRET, { // login token generation
+      expiresIn: "1h",
+    }); // Generate a JWT token for the user
     res.status(200).json({
       message: "Login successful",
       user: { id: user.id, email: user.email, name: user.name },
+      token: token
     }); // Respond with success message and user data (excluding password)
   } catch (err) {
     console.log(err);
@@ -64,9 +70,15 @@ router.post("/signup", async (req, res) => {
       },
     });
 
-    res
-      .status(201)
-      .json({ message: "User created successfully", email: email, name: name}); // Respond with success message and user data
+    const token = jwt.sign({ email: newUser.email }, JWT_SECRET, {
+      expiresIn: "1h",
+    }); // Generate a JWT token for the user
+    res.status(201).json({
+      message: "User created successfully",
+      email: newUser.email,
+      name: newUser.name,
+      token: token, // Respond with the token and user data (excluding password)
+    }); // Respond with success message and user data
   } catch (error) {
     console.error("Server error:", error);
     res.status(500).json({ error: "Server error" }); //internal server error

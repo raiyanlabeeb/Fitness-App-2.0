@@ -27,6 +27,7 @@ function SignUpPage() {
       const data = await response.json(); // Waits for the response and converts it to JSON. Data now holds the response from the server.
       if (response.ok) {
         setMessage("✅");
+        localStorage.setItem("token", data.token); // Stores the token in localStorage for future authenticated requests
         setTimeout(() => {
           navigate("/main");
         }, 1000);
