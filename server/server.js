@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import auth from "./routes/signUpRouter.js";
+import auth from "./routes/authRouter.js";
 
 const app = express();
 const PORT = 5000;

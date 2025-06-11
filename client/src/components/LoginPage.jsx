@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate(); // useNavigate hook from react-router-dom to programmatically navigate
 
   useEffect(() => {
     // Disable scrolling on mount
@@ -16,16 +19,35 @@ function LoginPage() {
     };
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:5000/auth/login", {
+        //Send a post request to the server to login
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (!email || !password) {
-      setMessage("Please enter both email and password.");
-      return;
+      setError(""); // Resets any previous error message
+      setMessage(""); // Resets any previous success message
+
+      const data = await response.json(); // Waits for the response and converts it to JSON. Data now holds the response from the server.
+      if (response.ok) {
+        setMessage("✅");
+        setTimeout(() => {
+          navigate("/main"); // Redirects to the main page after successful login
+        }, 1000);
+      } else {
+        setError(data.error || "An error occurred. Please try again.");
+        console.error(data.error, response.status);
+      }
+    } catch (err) {
+      console.error("Error during login:", err); // Logs any error that occurs during the fetch request
+      setError("An error occurred. Please try again later.");
     }
-
-    // TODO: Replace with real backend auth call
-    setMessage(`Logging in with email: ${email}`);
   };
 
   return (
@@ -34,7 +56,10 @@ function LoginPage() {
         <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block mb-2 font-medium text-gray-700" htmlFor="email">
+            <label
+              className="block mb-2 font-medium text-gray-700"
+              htmlFor="email"
+            >
               Email
             </label>
             <input
@@ -48,7 +73,10 @@ function LoginPage() {
           </div>
 
           <div>
-            <label className="block mb-2 font-medium text-gray-700" htmlFor="password">
+            <label
+              className="block mb-2 font-medium text-gray-700"
+              htmlFor="password"
+            >
               Password
             </label>
             <input
@@ -69,8 +97,12 @@ function LoginPage() {
           </button>
         </form>
 
-        {message && (
-          <p className="mt-4 text-center text-green-600 font-medium">{message}</p>
+        {error ? (
+          <p className="mt-4 text-center text-red-600 font-medium">{error}</p>
+        ) : (
+          <p className="mt-4 text-center text-green-600 font-medium">
+            {message}
+          </p>
         )}
 
         <p className="mt-6 text-center text-gray-600">

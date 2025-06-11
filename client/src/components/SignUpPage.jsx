@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function SignUpPage() {
   const [name, setName] = useState("");
@@ -7,7 +8,7 @@ function SignUpPage() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-
+  const navigate = useNavigate(); // useNavigate hook from react-router-dom to programmatically navigate
   const handleSubmit = async (e) => {
     e.preventDefault(); //Prevents the default browser form submission behavior which reloads the page.
 
@@ -20,14 +21,18 @@ function SignUpPage() {
         },
         body: JSON.stringify({ name, email, password }),
       });
-      
+
       setError(""); // Resets any previous error message
       setMessage(""); // Resets any previous success message
       const data = await response.json(); // Waits for the response and converts it to JSON. Data now holds the response from the server.
       if (response.ok) {
         setMessage("✅");
+        setTimeout(() => {
+          navigate("/main");
+        }, 1000);
       } else {
         setError(data.error || "An error occurred. Please try again.");
+        console.error(data.error, response.status);
       }
     } catch (error) {
       console.error("Error during signup:", error); // Logs any error that occurs during the fetch request
