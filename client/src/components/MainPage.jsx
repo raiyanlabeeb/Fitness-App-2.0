@@ -1,39 +1,26 @@
-import React from "react";
-import { use } from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 const MainPage = () => {
-  const [user, setUser] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      console.error("Access token is invalid or missing.");
-      return;
-    }
-
-    fetch("http://localhost:5000/api/main", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }).then(async (res) => {
-      if (!res.ok) {
-        console.error("Error:", res.status, res.error);
-        navigate("/login");
-        return;
-      }
-
-      const data = await res.json();
-      setUser(data.user);
-    });
-  });
+  const user = useAuth();
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
-    <div>
-      <h1>Welcome {user.name}!</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+      <h1 className="text-4xl font-bold mb-6 text-gray-800">
+        Welcome to the Main Page, {user.name}!
+      </h1>
+      <button
+        onClick={handleLogout}
+        className="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
+      >
+        Logout
+      </button>
     </div>
   );
 };

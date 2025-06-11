@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth"; // Assuming useAuth is in hooks folder
 
 function SignUpPage() {
   const [name, setName] = useState("");
@@ -9,6 +10,11 @@ function SignUpPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate(); // useNavigate hook from react-router-dom to programmatically navigate
+  const user = useAuth();
+  
+  if (user) {
+    navigate("/main");
+  } // If user is already authenticated, redirect to main page
   const handleSubmit = async (e) => {
     e.preventDefault(); //Prevents the default browser form submission behavior which reloads the page.
 

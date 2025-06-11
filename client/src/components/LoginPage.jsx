@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth"; // Assuming useAuth is in hooks folder
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -9,6 +10,10 @@ function LoginPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate(); // useNavigate hook from react-router-dom to programmatically navigate
 
+  const user = useAuth();
+  if (user) {
+    navigate("/main");
+  } // If user is already authenticated, redirect to main page
   useEffect(() => {
     // Disable scrolling on mount
     document.body.style.overflow = "hidden";
