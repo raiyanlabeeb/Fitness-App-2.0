@@ -29,7 +29,7 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid password" }); // If password is incorrect, return an error (401 Unauthorized)
     }
 
-    const token = jwt.sign({ email: user.email }, JWT_SECRET, { // login token generation
+    const token = jwt.sign({ name:user.name, email: user.email }, JWT_SECRET, { // login token generation
       expiresIn: "1h",
     }); // Generate a JWT token for the user
     res.status(200).json({
@@ -70,7 +70,7 @@ router.post("/signup", async (req, res) => {
       },
     });
 
-    const token = jwt.sign({ email: newUser.email }, JWT_SECRET, {
+    const token = jwt.sign({ name:newUser.name, email: newUser.email }, JWT_SECRET, {
       expiresIn: "1h",
     }); // Generate a JWT token for the user
     res.status(201).json({
