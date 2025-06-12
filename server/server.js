@@ -1,3 +1,8 @@
+/**
+ * @author Raiyan Labeeb
+ * @description This file sets up the Express server, configures middleware, and defines the main routes for the application.
+ */
+
 import express from "express";
 import cors from "cors";
 import auth from "./routes/authRouter.js";
