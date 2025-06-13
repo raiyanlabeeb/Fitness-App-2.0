@@ -3,7 +3,7 @@
  * @description This file contains the authentication controller functions for user login and signup. It handles all logic that bridges view to model.
  */
 
-import { getUserByEmail, createUser } from "../models/userModel.js";
+import { getUserByEmail, createUser, getUserById } from "../models/userModel.js";
 import {
   hashPassword,
   verifyPassword,
@@ -18,6 +18,7 @@ export async function loginUser(req, res) {
 
   try {
     const user = await getUserByEmail(email);
+    
     if (!user) {
       return res.status(404).json({ error: "User not found" }); // If user does not exist, return an error (404 Not Found)
     }
@@ -26,7 +27,7 @@ export async function loginUser(req, res) {
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid password" }); // If password is incorrect, return an error (401 Unauthorized)
     }
-
+    
     const token = generateToken(user); // Generates a JWT token for the user
     res.status(200).json({
       message: "Login successful",
@@ -34,7 +35,7 @@ export async function loginUser(req, res) {
       token: token,
     }); // Respond with success message and user data (excluding password)
   } catch (err) {
-    return res.status(500).json({ error: "Server error during login." }); //internal server error
+    return res.status(500).json({ error: err.message }); //internal server error
   }
 }
 
@@ -68,3 +69,30 @@ export async function signUpUser(req, res) {
     res.status(500).json({ error: error.message }); //internal server error
   }
 }
+
+/**
+ * @description Get user is different from a regular database operation because it relies on the JWT token to identify the user, which we have to extract and verify before fetching the user data.
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
+// export async function getUser(req, res) {
+//   const user_id = req.headers["authorization"].user_id; 
+
+//   try {
+//     const user = await getUserById(user_id); // Fetches the user by ID from the database
+//     if (!user) {
+//       return res.status(404).json({ error: "User not found" }); // If user does not exist, return an error (404 Not Found)
+//     }
+
+//     res.status(200).json({
+//       id: user.id,
+//       email: user.email,
+//       name: user.name,
+//     }); // Respond with user data
+//   } catch (err) {
+//     return res
+//       .status(500)
+//       .json({ error: "Server error during fetching user." }); //internal server error
+//   }
+// }

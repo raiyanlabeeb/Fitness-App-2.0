@@ -7,6 +7,7 @@ import express from "express";
 import cors from "cors";
 import auth from "./routes/authRouter.js";
 import mainRoute from "./routes/mainRoute.js";
+import lift from "./routes/liftRouter.js"; // Importing the lift router for handling lift-related routes
 
 const app = express();
 const PORT = 5000;
@@ -16,7 +17,9 @@ app.use(express.json());
 app.use(cors());
 app.use("/auth", auth); // for any route starting with /auth, use the auth router
 app.use("/api", mainRoute); // for any route starting with /, use the main route
+app.use("/api", lift); // for any route starting with /api, use the lift router
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+  

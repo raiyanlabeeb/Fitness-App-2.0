@@ -12,49 +12,50 @@ datasource db {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Exercise {
   exercise_name String   @db.VarChar
-  set_id        BigInt
+  set_id        Int
   lift_date     DateTime @db.Date
-  reps          Int?     @db.SmallInt
+  reps          Int?
   weight        Float?
   unit          String?  @db.VarChar
-  email         String   @db.VarChar
-  Lift          Lift     @relation(fields: [lift_date, email], references: [lift_date, email], onDelete: Cascade)
+  user_id       Int
+  User          User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
-  @@id([exercise_name, set_id, lift_date, email])
+  @@id([exercise_name, set_id, lift_date, user_id])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Lift {
-  lift_date  DateTime   @db.Date
-  lift_title String     @db.VarChar
-  email      String     @db.VarChar
-  Exercise   Exercise[]
-  User       User       @relation(fields: [email], references: [email], onDelete: Cascade)
+  lift_date  DateTime @db.Date
+  lift_title String   @db.VarChar
+  user_id    Int
+  User       User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
-  @@id([lift_date, email])
+  @@id([lift_date, user_id])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Run {
   run_title String   @db.VarChar
   run_date  DateTime @db.Date
-  distance  Float?
-  time      Float?
-  pace      Float?
+  distance  Float?   @db.Real
+  time      Float?   @db.Real
+  pace      Float?   @db.Real
   notes     String?  @db.VarChar
   unit      String?  @db.VarChar
-  email     String   @db.VarChar
-  User      User     @relation(fields: [email], references: [email], onDelete: Cascade)
+  user_id   Int      @unique
+  User      User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 
-  @@id([run_date, email])
+  @@id([run_date, user_id])
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model User {
-  email        String  @id @db.VarChar
-  password     String  @db.VarChar
-  phone_number String? @db.VarChar
-  name         String? @db.VarChar
+  email        String     @unique @db.VarChar
+  password     String     @db.VarChar
+  phone_number String?    @db.VarChar
+  name         String?    @db.VarChar
+  user_id      Int        @id @unique @default(autoincrement())
+  Exercise     Exercise[]
   Lift         Lift[]
-  Run          Run[]
+  Run          Run?
 }

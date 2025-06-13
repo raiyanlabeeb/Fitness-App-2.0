@@ -14,7 +14,6 @@ export function useAuth() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-    //   console.error("Access token is invalid or missing.");
       setUser(null);
       return;
     }
@@ -26,7 +25,6 @@ export function useAuth() {
       },
     }).then(async (res) => {
       if (!res.ok) {
-        // console.error("Error:", res.status, res.error);
         setUser(null);
         return;
       }

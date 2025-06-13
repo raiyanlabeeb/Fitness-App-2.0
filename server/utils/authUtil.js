@@ -17,5 +17,17 @@ export async function verifyPassword(inputPassword, storedHash) {
 }
 
 export function generateToken(user) {
-  return jwt.sign({ name: user.name, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
+  const token =  jwt.sign({ name: user.name, user_id: user.user_id }, JWT_SECRET, {
+    expiresIn: "1h",
+  });
+  return token;
+}
+
+export function getUserIDFromToken(token) {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    return decoded.user_id;
+  } catch (err) {
+    return null; // Return null if token is invalid
+  }
 }
