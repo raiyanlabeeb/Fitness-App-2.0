@@ -3,7 +3,7 @@
  * @description This file handles user-related database operations, such as retrieving a user by email and creating a new user.
  */
 
-import prisma from "../prisma.js";
+import prisma from "../prisma/prisma.js"
 
 /**
  * @description Retrieves a user by their email address.

@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth"; // Assuming useAuth is in hooks folder
+import { signUpUser } from "../services/auth"; // Assuming signUpUser is in services folder
 
-function LoginPage() {
+function SignUpPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -11,56 +13,51 @@ function LoginPage() {
   const navigate = useNavigate(); // useNavigate hook from react-router-dom to programmatically navigate
 
   const user = useAuth();
-  if (user) {
-    navigate("/main");
-  } // If user is already authenticated, redirect to main page
-  useEffect(() => {
-    // Disable scrolling on mount
-    document.body.style.overflow = "hidden";
 
-    // Re-enable scrolling on unmount
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, []);
+  useEffect(() => {
+    if (user) {
+      navigate("/main");
+    }
+  });
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); //Prevents the default browser form submission behavior which reloads the page.
+    setError(""); // Resets any previous error message
+    setMessage(""); // Resets any previous success message
     try {
-      const response = await fetch("http://localhost:5000/auth/login", {
-        //Send a post request to the server to login
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      setError(""); // Resets any previous error message
-      setMessage(""); // Resets any previous success message
-
-      const data = await response.json(); // Waits for the response and converts it to JSON. Data now holds the response from the server.
-      if (response.ok) {
-        setMessage("✅");
-        localStorage.setItem("token", data.token); // Stores the token in localStorage for future authenticated requests
-        setTimeout(() => {
-          navigate("/main"); // Redirects to the main page after successful login
-        }, 1000);
-      } else {
-        setError(data.error || "An error occurred. Please try again.");
-        console.error(data.error, response.status);
-      }
-    } catch (err) {
-      console.error("Error during login:", err); // Logs any error that occurs during the fetch request
-      setError("An error occurred. Please try again later.");
+      const data = await signUpUser(name, email, password);
+      setMessage("✅");
+      localStorage.setItem("token", data.token);
+      setTimeout(() => {
+        navigate("/main");
+      }, 1000);
+    } catch (error) {
+      setError(error.message);
     }
   };
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100 px-4">
       <div className="bg-white p-8 rounded shadow-md max-w-md w-full">
-        <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
+        <h2 className="text-2xl font-semibold mb-6 text-center">Sign Up</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label
+              className="block mb-2 font-medium text-gray-700"
+              htmlFor="name"
+            >
+              Full Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+
           <div>
             <label
               className="block mb-2 font-medium text-gray-700"
@@ -99,7 +96,7 @@ function LoginPage() {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
           >
-            Login
+            Sign Up
           </button>
         </form>
 
@@ -110,11 +107,10 @@ function LoginPage() {
             {message}
           </p>
         )}
-
         <p className="mt-6 text-center text-gray-600">
-          Don&apos;t have an account?{" "}
-          <Link to="/signup" className="text-blue-600 hover:underline">
-            Sign up
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-600 hover:underline">
+            Log in
           </Link>
         </p>
       </div>
@@ -122,4 +118,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default SignUpPage;

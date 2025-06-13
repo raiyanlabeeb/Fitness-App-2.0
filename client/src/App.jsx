@@ -3,10 +3,10 @@ import { useEffect } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import LoginPage from "./components/LoginPage";
-import HomePage from "./components/HomePage";
-import SignUpPage from "./components/SignUpPage";
-import MainPage from "./components/MainPage";
+import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/HomePage";
+import SignUpPage from "./pages/SignUpPage";
+import MainPage from "./pages/MainPage";
 import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
@@ -41,7 +41,7 @@ function App() {
           path="/main"
           element={
             <PrivateRoute>
-              <MainPage/>
+              <MainPage />
             </PrivateRoute>
           }
         ></Route>
