@@ -5,11 +5,11 @@
  */
 
 import express from "express";  
-import cors from "cors";
-import { createLift } from "../controllers/liftController.js"; 
+import { createLift, updateLift } from "../controllers/liftController.js"; 
 import authenticateToken from "../middleware/authMiddleware.js";
 
 const router = express.Router(); 
 router.post("/lift", authenticateToken, createLift); // any post request to /api will call the createLift function from liftController.js
+router.put("/lift", authenticateToken, updateLift); // any put request to /api will call the updateLift function from liftController.js
 
 export default router; // Export the router to be used in the main server file

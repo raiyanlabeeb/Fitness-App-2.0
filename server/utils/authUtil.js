@@ -26,6 +26,7 @@ export function generateToken(user) {
 export function getUserIDFromToken(token) {
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
+    console.log("Decoded token:", decoded);
     return decoded.user_id;
   } catch (err) {
     return null; // Return null if token is invalid

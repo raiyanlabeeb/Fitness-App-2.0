@@ -7,6 +7,7 @@
 import prisma from "../prisma/prisma.js";
 import { addLift } from "../models/liftModel.js";
 import { getUserIDFromToken } from "../utils/authUtil.js";
+import { doesLiftExist, changeLift } from "../models/liftModel.js";
 export async function createLift(req, res) {
   const { liftDate, liftTitle } = req.body;
   if (!liftDate || !liftTitle) {
@@ -33,20 +34,26 @@ export async function createLift(req, res) {
 }
 
 export async function updateLift(req, res) {
-  const { newliftDate, newEmail, oldliftDate, oldEmail, liftTitle } = req.body;
-  if (!liftDate || !email || !liftTitle) {
+  const { liftDate, newLiftTitle } = req.body;
+
+  if (!liftDate || !newLiftTitle) {
     return res.status(400).json({ error: "Missing fields" }); // error handling for missing fields
   }
 
   try {
-    const updatedLift = await prisma.lift.update({
-      where: { email: email, liftDate: new Date(liftDate) },
-      data: {
-        liftDate: new Date(liftDate), // Convert string date to Date object
-        email: email,
-        liftTitle: liftTitle,
-      },
-    });
+    const userId = getUserIDFromToken(
+      req.headers["authorization"] && req.headers["authorization"].split(" ")[1]
+    );
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" }); // If no user_id is found, return an error (401 Unauthorized)
+    }
+
+    if (!(await doesLiftExist(userId, liftDate))) {
+      // Make sure there's an existing lift to update
+      return res.status(404).json({ error: "Lift not found" });
+    }
+
+    const updatedLift = await changeLift(userId, liftDate, newLiftTitle); // Calls the changeLift function to update the lift entry
 
     res
       .status(200)

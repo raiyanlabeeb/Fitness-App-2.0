@@ -19,4 +19,37 @@ export async function addLift(userId, liftDate, liftTitle) {
   }
 }
 
+export async function changeLift(userId, liftDate, newLiftTitle) {
+  try {
+    const updatedLift = await prisma.lift.update({
+      where: {
+        lift_date_user_id: {
+          user_id: userId,
+          lift_date: new Date(liftDate), // Convert string date to Date object
+        },
+      },
+      data: {
+        lift_title: newLiftTitle,
+      },
+    });
+    return updatedLift;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
 
+export async function doesLiftExist(userId, liftDate) {
+  try {
+    const lift = await prisma.lift.findUnique({
+      where: {
+        lift_date_user_id: {
+          lift_date: new Date(liftDate),
+          user_id: userId,
+        },
+      },
+    });
+    return !!lift;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}

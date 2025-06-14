@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import LiftForm from "../components/LiftForm";
+import UpdateLiftForm from "../components/UpdateLiftForm";
 const MainPage = () => {
   const navigate = useNavigate();
 
@@ -17,6 +18,7 @@ const MainPage = () => {
         Welcome to the Main Page, {user.name}!
       </h1>
       <LiftForm/>
+      <UpdateLiftForm/>
       <button
         onClick={handleLogout}
         className="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
