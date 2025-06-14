@@ -32,10 +32,6 @@ function LiftForm() {
       return;
     }
 
-    // TODO: send `newLift` to backend API
-    // fetch("/api/lifts", { method: "POST", body: JSON.stringify(newLift), headers: { "Content-Type": "application/json" } })
-
-    // Clear form
     setLiftTitle("");
     setLiftDate("");
   };

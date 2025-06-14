@@ -53,3 +53,19 @@ export async function doesLiftExist(userId, liftDate) {
     throw new Error(err.message);
   }
 }
+
+export async function getAllLifts(userId) {
+  try {
+    const lifts = await prisma.lift.findMany({
+      where: {
+        user_id: userId,
+      },
+      orderBy: {
+        lift_date: "desc", // Order by date in descending order
+      },
+    });
+    return lifts;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}

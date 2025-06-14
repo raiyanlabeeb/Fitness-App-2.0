@@ -7,7 +7,7 @@
 import prisma from "../prisma/prisma.js";
 import { addLift } from "../models/liftModel.js";
 import { getUserIDFromToken } from "../utils/authUtil.js";
-import { doesLiftExist, changeLift } from "../models/liftModel.js";
+import { doesLiftExist, changeLift, getAllLifts } from "../models/liftModel.js";
 export async function createLift(req, res) {
   const { liftDate, liftTitle } = req.body;
   if (!liftDate || !liftTitle) {
@@ -63,22 +63,17 @@ export async function updateLift(req, res) {
   }
 }
 
-export async function readLift(req, res) {
+export async function readLifts(req, res) {
   try {
-    const token =
-      req.headers["authorization"] &&
-      req.headers["authorization"].split(" ")[1];
-    const user_id = getUserIDFromToken(token);
+    const user_id = getUserIDFromToken(
+      req.headers["authorization"] && req.headers["authorization"].split(" ")[1]
+    );
     if (!user_id) {
       return res.status(401).json({ error: "Unauthorized" }); // If no user_id is found, return an error (401 Unauthorized)
     }
 
-    const lifts = await prisma.lift.findMany({
-      where: { user_id },
-      orderBy: { lift_date: "asc" }, // Sort by lift_date in ascending order
-    });
-
-    res.status(200).json(lifts); // Return the list of lifts
+    const lifts = await getAllLifts(user_id); 
+    res.status(200).json({lifts: lifts}); // Return the list of lifts
   } catch (err) {
     return res.status(500).json({ error: err.message }); // internal server error
   }

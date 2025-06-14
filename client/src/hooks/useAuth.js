@@ -8,6 +8,11 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
+/**
+ * @description Custom hook to handle user authentication. This function is called automatically when the component mounts and checks if the user is valid.
+ * This function should be called before displaying sensitive data or components that require authentication.
+ * @returns {string|null} user - The authenticated user's data or null if not authenticated.
+ */
 export function useAuth() {
   const [user, setUser] = useState("");
   const navigate = useNavigate();
