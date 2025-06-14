@@ -62,3 +62,24 @@ export async function updateLift(req, res) {
     return res.status(500).json({ error: err.message }); // internal server error
   }
 }
+
+export async function readLift(req, res) {
+  try {
+    const token =
+      req.headers["authorization"] &&
+      req.headers["authorization"].split(" ")[1];
+    const user_id = getUserIDFromToken(token);
+    if (!user_id) {
+      return res.status(401).json({ error: "Unauthorized" }); // If no user_id is found, return an error (401 Unauthorized)
+    }
+
+    const lifts = await prisma.lift.findMany({
+      where: { user_id },
+      orderBy: { lift_date: "asc" }, // Sort by lift_date in ascending order
+    });
+
+    res.status(200).json(lifts); // Return the list of lifts
+  } catch (err) {
+    return res.status(500).json({ error: err.message }); // internal server error
+  }
+}
