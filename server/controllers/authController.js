@@ -8,7 +8,7 @@ import {
   hashPassword,
   verifyPassword,
   generateToken,
-} from "../utils/authUtil.js";
+} from "../utils/util.js";
 
 export async function loginUser(req, res) {
   const { email, password } = req.body; // Extracts the email and password that the user provides

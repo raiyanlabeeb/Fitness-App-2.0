@@ -25,15 +25,14 @@ function LiftForm() {
       if (!response.ok) {
         throw new Error(data.error || "Failed to create lift");
       }
-
-      console.log("Lift created successfully:", data);
     } catch (error) {
-      console.error("Error creating lift:", error.message, error.stack);
+      console.error("Error:", error.message);
       return;
     }
 
     setLiftTitle("");
     setLiftDate("");
+    window.location.reload(); // Reload to show the new lift
   };
 
   return (

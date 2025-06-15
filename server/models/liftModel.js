@@ -4,12 +4,13 @@
  */
 
 import prisma from "../prisma/prisma.js";
+import { parseDateToUTC } from "../utils/util.js";
 export async function addLift(userId, liftDate, liftTitle) {
   try {
     const newLift = await prisma.lift.create({
       data: {
         user_id: userId,
-        lift_date: new Date(liftDate), // Convert string date to Date object
+        lift_date: parseDateToUTC(liftDate),
         lift_title: liftTitle,
       },
     });
@@ -25,7 +26,7 @@ export async function changeLift(userId, liftDate, newLiftTitle) {
       where: {
         lift_date_user_id: {
           user_id: userId,
-          lift_date: new Date(liftDate), // Convert string date to Date object
+          lift_date: parseDateToUTC(liftDate),
         },
       },
       data: {
@@ -43,7 +44,7 @@ export async function doesLiftExist(userId, liftDate) {
     const lift = await prisma.lift.findUnique({
       where: {
         lift_date_user_id: {
-          lift_date: new Date(liftDate),
+          lift_date: parseDateToUTC(liftDate),
           user_id: userId,
         },
       },
@@ -64,7 +65,24 @@ export async function getAllLifts(userId) {
         lift_date: "desc", // Order by date in descending order
       },
     });
+
     return lifts;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
+
+export async function removeLift(userId, liftDate) {
+  try {
+    const deletedLift = await prisma.lift.delete({
+      where: {
+        lift_date_user_id: {
+          user_id: userId,
+          lift_date: parseDateToUTC(liftDate),
+        },
+      },
+    });
+    return deletedLift;
   } catch (err) {
     throw new Error(err.message);
   }

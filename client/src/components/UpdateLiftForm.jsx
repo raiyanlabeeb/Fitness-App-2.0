@@ -23,7 +23,9 @@ const UpdateLiftForm = () => {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Update failed");
-      // alert("Lift updated!");
+      setLiftDate("");
+      setNewLiftTitle("");
+      window.location.reload(); // Reload to show the new lift
     } catch (err) {
       console.error(err);
       // alert("Error: " + err.message);
@@ -35,7 +37,9 @@ const UpdateLiftForm = () => {
       onSubmit={handleUpdate}
       className="bg-white p-6 rounded-lg shadow-md w-full max-w-md mb-6"
     >
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">Update Lift Title</h2>
+      <h2 className="text-xl font-semibold mb-4 text-gray-800">
+        Update Lift Title
+      </h2>
 
       <label className="block mb-1 text-sm">Lift Date</label>
       <input

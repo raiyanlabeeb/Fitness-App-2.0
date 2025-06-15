@@ -1,7 +1,14 @@
 import React from "react";
 
 const LiftCard = ({ lift }) => {
-  const formattedDate = new Date(lift.lift_date).toLocaleDateString();
+  const dateObj = new Date(lift.lift_date);
+
+  // Format as MM/DD/YY using UTC to avoid timezone shifts
+  const month = (dateObj.getUTCMonth() + 1).toString().padStart(2, "0");
+  const day = dateObj.getUTCDate().toString().padStart(2, "0");
+  const year = dateObj.getUTCFullYear().toString().slice(-2);
+
+  const formattedDate = `${month}/${day}/${year}`;
 
   return (
     <div className="rounded-xl shadow-md p-4 border border-gray-200 bg-white mb-4">
