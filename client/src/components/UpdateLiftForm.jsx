@@ -1,12 +1,13 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
-const UpdateLiftForm = () => {
-  const [liftDate, setLiftDate] = useState("");
+function UpdateLiftForm({ selectedDate }) {
   const [newLiftTitle, setNewLiftTitle] = useState("");
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
+
+    const liftDate = selectedDate.toISOString().split("T")[0];
 
     try {
       const res = await fetch("http://localhost:5000/api/lift", {
@@ -15,40 +16,22 @@ const UpdateLiftForm = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          liftDate,
-          newLiftTitle,
-        }),
+        body: JSON.stringify({ liftDate, newLiftTitle }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Update failed");
-      setLiftDate("");
+
       setNewLiftTitle("");
-      window.location.reload(); // Reload to show the new lift
+      window.location.reload();
     } catch (err) {
       console.error(err);
-      // alert("Error: " + err.message);
     }
   };
 
   return (
-    <form
-      onSubmit={handleUpdate}
-      className="bg-white p-6 rounded-lg shadow-md w-full max-w-md mb-6"
-    >
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">
-        Update Lift Title
-      </h2>
-
-      <label className="block mb-1 text-sm">Lift Date</label>
-      <input
-        type="date"
-        value={liftDate}
-        onChange={(e) => setLiftDate(e.target.value)}
-        className="w-full p-2 border rounded mb-4"
-        required
-      />
+    <form onSubmit={handleUpdate} className="max-w-md mx-auto mt-10">
+      <h2 className="text-xl font-semibold mb-4">Update Lift</h2>
 
       <label className="block mb-1 text-sm">New Title</label>
       <input
@@ -67,6 +50,6 @@ const UpdateLiftForm = () => {
       </button>
     </form>
   );
-};
+}
 
 export default UpdateLiftForm;

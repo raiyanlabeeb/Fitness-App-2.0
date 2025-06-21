@@ -13,18 +13,12 @@ function LoginPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate(); // useNavigate hook from react-router-dom to programmatically navigate
   const user = useAuth();
+
   useEffect(() => {
     if (user) {
       navigate("/main");
     }
-    // Disable scrolling on mount
-    document.body.style.overflow = "hidden";
-
-    // Re-enable scrolling on unmount
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, []);
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();

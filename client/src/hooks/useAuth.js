@@ -25,6 +25,7 @@ export function useAuth() {
 
     fetch("http://localhost:5000/api/main", {
       headers: {
+        method: "GET",
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },

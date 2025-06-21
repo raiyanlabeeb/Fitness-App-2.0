@@ -5,6 +5,8 @@ import LiftForm from "../components/LiftForm";
 import UpdateLiftForm from "../components/UpdateLiftForm";
 import LiftList from "../components/LiftList";
 import DeleteLiftForm from "../components/DeleteLiftForm";
+import WorkoutCalendar from "../components/WorkoutCalendar";
+import WorkoutPage from "../components/WorkoutPage";
 const MainPage = () => {
   const navigate = useNavigate();
 
@@ -19,17 +21,13 @@ const MainPage = () => {
       <h1 className="text-4xl font-bold mb-6 text-gray-800">
         Welcome to the Main Page, {user.name}!
       </h1>
-      <LiftForm/>
-      <UpdateLiftForm/>
-      <LiftList />
-      <DeleteLiftForm />
+      <WorkoutPage />
       <br></br>
       <button
         onClick={handleLogout}
         className="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
       >
         Logout
-
       </button>
     </div>
   );

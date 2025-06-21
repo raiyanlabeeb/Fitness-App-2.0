@@ -6,15 +6,22 @@
 
 import prisma from "../prisma/prisma.js";
 import { addLift } from "../models/liftModel.js";
-import { getUserIDFromToken } from "../utils/util.js";
+import { convertDate, getUserIDFromToken } from "../utils/util.js";
 import {
   doesLiftExist,
   changeLift,
   getAllLifts,
   removeLift,
+  getLiftByDate,
 } from "../models/liftModel.js";
 export async function createLift(req, res) {
   const { liftDate, liftTitle } = req.body;
+  console.log(
+    "Creating lift for date:",
+    liftDate,
+    "with title:",
+    liftTitle
+  ); // Log the date and title being created
   if (!liftDate || !liftTitle) {
     return res.status(400).json({ error: "Missing fields" }); // error handling for missing fields
   }
@@ -112,6 +119,29 @@ export async function deleteLift(req, res) {
     await removeLift(userId, liftDate); // Calls the removeLift function to delete the lift entry
 
     res.status(200).json({ message: "Lift deleted successfully" });
+  } catch (err) {
+    return res.status(500).json({ error: err.message }); // internal server error
+  }
+}
+
+export async function readLiftByDate(req, res) {
+  try {
+    const { date } = req.query;
+    console.log("Date received:", date); // Log the date received from the request
+    if (!date) {
+      return res.status(400).json({ error: "Missing date field" }); // error handling for missing date field
+    }
+    const user_id = getUserIDFromToken(
+      req.headers["authorization"] && req.headers["authorization"].split(" ")[1]
+    );
+    if (!user_id) {
+      return res.status(401).json({ error: "Unauthorized" }); // If no user_id is found, return an error (401 Unauthorized)
+    }
+
+    console.log("getting lifts...");
+    const lift = await getLiftByDate(user_id, date);
+    console.log("received lifts!");
+    res.status(200).json({ lift: lift }); // Return the list of lifts
   } catch (err) {
     return res.status(500).json({ error: err.message }); // internal server error
   }

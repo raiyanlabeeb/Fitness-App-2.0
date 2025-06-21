@@ -3,17 +3,16 @@ import LiftCard from "./LiftCard";
 import { useState } from "react";
 import { useEffect } from "react";
 import { fetchLifts } from "../services/lifts";
-const LiftList = () => {
-  const [lifts, setLifts] = useState([]);
-  useEffect(() => {
-    fetchLifts()
-      .then((data) => {
-        setLifts(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching lifts:", error.message);
-      });
-  }, []);
+const LiftList = ( {lifts}) => {
+  // useEffect(() => {
+  //   fetchLifts()
+  //     .then((data) => {
+  //       setLifts(data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching lifts:", error.message);
+  //     });
+  // }, []);
 
   return (
     <div className="space-y-4">

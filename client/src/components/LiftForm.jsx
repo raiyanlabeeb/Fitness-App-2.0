@@ -1,38 +1,57 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
-function LiftForm() {
+function LiftForm({ selectedDate }) {
   const [liftTitle, setLiftTitle] = useState("");
-  const [liftDate, setLiftDate] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setUser(null);
-      return;
-    }
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const token = localStorage.getItem("token");
+  //   if (!token) return;
+
+  //   try {
+  //     const res = await fetch("http://localhost:5000/api/lift", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: JSON.stringify({ liftTitle, selectedDate }),
+  //     });
+
+  //     const data = await res.json();
+  //     if (!res.ok) throw new Error(data.error || "Failed to create lift");
+
+  //     setLiftTitle("");
+  //     window.location.reload();
+  //   } catch (err) {
+  //     console.error("Error:", err.message);
+  //   }
+  // };
+
+    const handleSubmit = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/lift", {
+      console.log("Adding lift:", liftTitle, "for date:", selectedDate);
+      const res = await fetch("http://localhost:5000/api/lift", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ liftTitle, liftDate }),
+        body: JSON.stringify({
+          liftTitle: liftTitle,
+          liftDate: selectedDate,
+        }),
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to create lift");
-      }
-    } catch (error) {
-      console.error("Error:", error.message);
-      return;
-    }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to add lift");
 
-    setLiftTitle("");
-    setLiftDate("");
-    window.location.reload(); // Reload to show the new lift
+      setLift([...lift, data.lift]); // Append new lift
+      console.log("Lift added:", data.lift);
+    } catch (err) {
+      console.error("Add failed:", err.message);
+    }
   };
 
   return (
@@ -48,18 +67,6 @@ function LiftForm() {
           placeholder="e.g. Bench Press"
         />
       </div>
-
-      <div>
-        <label className="block mb-1 font-medium">Lift Date</label>
-        <input
-          type="date"
-          value={liftDate}
-          onChange={(e) => setLiftDate(e.target.value)}
-          required
-          className="w-full border border-gray-300 rounded px-3 py-2"
-        />
-      </div>
-
       <button
         type="submit"
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
